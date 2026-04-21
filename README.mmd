@@ -1,0 +1,29 @@
+graph TD
+    A[User] --> B{Authenticated?}
+    B -- No --> C[Login Page]
+    B -- Yes --> D[Dashboard]
+    
+    C --> B
+    
+    D --> E[Tiendas / Store Management]
+    D --> F[User Management]
+    D --> G[Profile]
+    
+    F --> H[Users List]
+    H --> I[Create User]
+    
+    subgraph "Protected Routes"
+    D
+    E
+    F
+    G
+    H
+    I
+    end
+    
+    subgraph "Tech Stack"
+    React[React 18]
+    Vite[Vite]
+    MUI[Material UI]
+    Tailwind[Tailwind CSS]
+    end
