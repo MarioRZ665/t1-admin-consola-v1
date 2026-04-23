@@ -192,3 +192,29 @@ select:focus {
 .phone-input-container .country-list .country.highlight {
   background-color: rgba(var(--brand-primary-rgb), 0.08) !important;
 }
+
+/* Custom Scrollbar Utility */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #db3b2b44;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #db3b2b66;
+}
+
+@media (max-width: 640px) {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+}

@@ -194,23 +194,24 @@ const UsersList: React.FC = () => {
 	];
 
 	return (
-		<div className="w-full">
-			<h2 className="text-2xl font-bold mb-6">Usuarios</h2>
-			<div className="bg-white/5 border border-white/10 p-4 sm:p-6 rounded-2xl">
-				<div className="flex items-center justify-end mb-4 gap-2">
+		<div className="w-full p-4 sm:p-6 lg:p-0">
+			<h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Usuarios</h2>
+			<div className="bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm">
+				<div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end mb-6 gap-3">
 					<button
 						onClick={loadUsers}
-						className="px-4 py-2 rounded-xl border border-white/10 text-white-2 text-sm font-semibold transition-all hover:bg-white/5"
+						className="px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold transition-all hover:bg-gray-50 flex items-center justify-center gap-2"
 					>
-						Actualizar lista
+						Actualizar
 					</button>
 					<button
 						onClick={() => setCreateOpen(true)}
-						className="px-6 py-2 rounded-xl btn-primary text-white-2 text-sm font-semibold transition-all hover:scale-[1.02]"
+						className="px-6 py-2.5 rounded-xl bg-[#db3b2b] text-white font-semibold text-sm transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
 					>
 						Crear usuario
 					</button>
 				</div>
+
 
 				{loading ? (
 					<div className="space-y-4">
@@ -220,7 +221,7 @@ const UsersList: React.FC = () => {
 				) : error ? (
 					<Alert severity="error" className="rounded-xl">{error}</Alert>
 				) : (
-					<div style={{ height: 550, width: '100%' }}>
+					<div style={{ height: window.innerWidth < 768 ? 450 : 550, width: '100%' }}>
 						<DataGrid
 							rows={rows}
 							columns={columns}

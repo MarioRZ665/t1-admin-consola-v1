@@ -38,7 +38,7 @@ const Login: React.FC = () => {
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.6 }}
-				className="w-full max-w-md p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl z-10"
+				className="w-full max-w-md p-6 md:p-8 bg-white backdrop-blur-xl border border-gray-100 rounded-3xl shadow-2xl z-10 mx-4"
 			>
 
 				<h1 className='text-2xl font-bold text-red-600 text-center'>T1</h1>

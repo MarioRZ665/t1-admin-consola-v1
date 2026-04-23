@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, CircularProgress } from '@mui/material';
+import { Dialog, DialogContent, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import ExpedienteHeader from './ExpedienteHeader';
 import ExpedienteTabs from './ExpedienteTabs';
 import ExpedienteSystemID from './ExpedienteSystemID';
@@ -13,10 +13,12 @@ import { StoreIdentityV3 } from '../../../models/store';
 interface Props {
   open: boolean;
   onClose: () => void;
-  tienda: any; // Can be typed properly if needed
+  tienda: any; 
 }
 
 const ExpedienteModal: React.FC<Props> = ({ open, onClose, tienda }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [activeTab, setActiveTab] = useState<'ficha' | 'bitacora'>('ficha');
   const [identity, setIdentity] = useState<StoreIdentityV3 | null>(null);
   const [sellerStatus, setSellerStatus] = useState<boolean | null>(null);
@@ -64,11 +66,12 @@ const ExpedienteModal: React.FC<Props> = ({ open, onClose, tienda }) => {
       onClose={onClose}
       fullWidth
       maxWidth="md"
+      fullScreen={isMobile}
       PaperProps={{
         sx: {
-          borderRadius: '16px',
+          borderRadius: isMobile ? 0 : '16px',
           overflow: 'hidden',
-          backgroundColor: '#f8fafc' // Light background matching image
+          backgroundColor: '#f8fafc' 
         }
       }}
     >

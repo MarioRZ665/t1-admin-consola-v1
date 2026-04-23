@@ -77,7 +77,8 @@ const Profile: React.FC = () => {
 
 	if (loading) {
 		return (
-			<div className="p-8 max-w-4xl">
+			<div className="p-4 sm:p-6 lg:p-0 max-w-4xl">
+
 				<Skeleton variant="text" width={200} height={40} className="mb-6 bg-white/5" />
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 					<Skeleton variant="rectangular" height={300} className="rounded-2xl bg-white/5" />
@@ -98,8 +99,9 @@ const Profile: React.FC = () => {
 	}
 
 	return (
-		<div className="max-w-4xl">
-			<h2 className="text-2xl font-bold mb-6">Mi Perfil</h2>
+		<div className="max-w-4xl p-4 sm:p-6 lg:p-0">
+			<h2 className="text-xl md:text-2xl font-bold mb-6">Mi Perfil</h2>
+
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 				{/* Información Personal */}

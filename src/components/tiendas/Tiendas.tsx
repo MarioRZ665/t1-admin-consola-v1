@@ -184,7 +184,7 @@ const Tiendas: React.FC = () => {
     ];
 
     return (
-        <div className="p-8 max-w-7xl mx-auto space-y-6">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
             <style>
                 {`
                     .custom-scrollbar::-webkit-scrollbar {
@@ -202,13 +202,13 @@ const Tiendas: React.FC = () => {
             </style>
             
             {/* Search Bar Section */}
-            <div className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-4 border border-gray-50">
+            <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col md:flex-row items-stretch md:items-center gap-4 border border-gray-50">
                 <div className="flex-1 flex items-center border border-gray-200 rounded-lg overflow-hidden h-11 bg-white">
                     <div
                         onClick={handleCategoryClick}
-                        className="flex items-center gap-2 px-4 py-2 min-w-[140px] bg-white border-r border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-2 px-3 md:px-4 py-2 min-w-[100px] md:min-w-[140px] bg-white border-r border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
                     >
-                        <span className="text-sm font-bold text-gray-800">{searchCategory}</span>
+                        <span className="text-xs md:text-sm font-bold text-gray-800">{searchCategory}</span>
                         <ChevronDown size={14} className="text-gray-400 ml-auto" />
                     </div>
                     <Menu
@@ -253,25 +253,26 @@ const Tiendas: React.FC = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && fetchTiendas(searchTerm)}
-                        className="flex-1 px-4 py-2 bg-transparent !border-none !shadow-none !ring-0 !outline-none text-sm text-gray-400 font-medium"
+                        className="flex-1 px-4 py-2 bg-transparent !border-none !shadow-none !ring-0 !outline-none text-sm text-gray-400 font-medium w-full"
                     />
                 </div>
-                <button
-                    onClick={() => fetchTiendas(searchTerm)}
-                    disabled={loading}
-                    className="bg-[#db3b2b] text-white-2 px-10 h-11 rounded-lg font-extrabold text-sm tracking-[0.1em] hover:bg-[#c43527] transition-all hover:shadow-lg uppercase whitespace-nowrap disabled:opacity-50"
-                >
-                    {loading ? 'CARGANDO...' : 'BUSCAR'}
-                </button>
-                <div className="pl-2">
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => fetchTiendas(searchTerm)}
+                        disabled={loading}
+                        className="flex-1 md:flex-none bg-[#db3b2b] text-white-2 px-6 md:px-10 h-11 rounded-lg font-extrabold text-sm tracking-[0.1em] hover:bg-[#c43527] transition-all hover:shadow-lg uppercase whitespace-nowrap disabled:opacity-50"
+                    >
+                        {loading ? '...' : 'BUSCAR'}
+                    </button>
                     <button
                         onClick={() => { setSearchTerm(''); fetchTiendas(''); }}
-                        className="text-[#c1c1c1] text-[11px] font-bold hover:text-gray-500 transition-colors uppercase tracking-[0.2em] whitespace-nowrap"
+                        className="flex-1 md:flex-none h-11 px-4 text-[#c1c1c1] text-[10px] md:text-[11px] font-bold hover:text-gray-500 transition-colors uppercase tracking-[0.1em] md:tracking-[0.2em] whitespace-nowrap border border-gray-100 md:border-none rounded-lg md:rounded-none"
                     >
                         VER TODAS
                     </button>
                 </div>
             </div>
+
 
             {error && (
                 <div className="bg-red-50 border border-red-100 text-[#db3b2b] px-4 py-3 rounded-lg text-sm font-semibold flex items-center gap-2">

@@ -7,7 +7,7 @@ interface Props {
 
 const ExpedienteTabs: React.FC<Props> = ({ activeTab, onTabChange }) => {
   return (
-    <div className="flex border-b border-gray-100 px-6 bg-white overflow-hidden">
+    <div className="flex border-b border-gray-100 px-4 md:px-6 bg-white overflow-x-auto flex-nowrap custom-scrollbar">
       <button
         onClick={() => onTabChange('ficha')}
         className={`px-8 py-4 text-[10px] font-black tracking-widest uppercase relative transition-colors ${

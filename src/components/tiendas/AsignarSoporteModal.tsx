@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, MenuItem, Select, FormControl, CircularProgress } from '@mui/material';
+import { Dialog, DialogContent, MenuItem, Select, FormControl, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { CheckCircle, XCircle } from 'lucide-react';
 import storeService from '../../services/storeService';
 
@@ -15,6 +15,8 @@ const SOPORTE_EMAILS = [
 ];
 
 const AsignarSoporteModal: React.FC<Props> = ({ open, onClose, tiendaName, storeId }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedEmail, setSelectedEmail] = React.useState(SOPORTE_EMAILS[0]);
   const [comment, setComment] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -32,34 +34,39 @@ const AsignarSoporteModal: React.FC<Props> = ({ open, onClose, tiendaName, store
     setLoading(true);
     setResult(null);
 
-    const [assignResult, ghostResult] = await Promise.allSettled([
-      storeService.createAssignment({
-        email: selectedEmail,
-        seller: {
-          id: Number(storeId),
-          name: tiendaName,
-        },
-        comment,
-        image_url: 'https://placeholder.example.com/imagen.jpg', // URL ficticia por ahora
-        is_authorized: true,
-      }),
-      storeService.addUserSystemGhost(storeId, selectedEmail),
-    ]);
+    try {
+      const [assignResult, ghostResult] = await Promise.allSettled([
+        storeService.createAssignment({
+          email: selectedEmail,
+          seller: {
+            id: Number(storeId),
+            name: tiendaName,
+          },
+          comment,
+          image_url: 'https://placeholder.example.com/imagen.jpg', 
+          is_authorized: true,
+        }),
+        storeService.addUserSystemGhost(storeId, selectedEmail),
+      ]);
 
-    setLoading(false);
+      setLoading(false);
 
-    const errors: string[] = [];
-    if (assignResult.status === 'rejected') {
-      errors.push(`Asignación: ${assignResult.reason?.message || 'Error desconocido'}`);
-    }
-    if (ghostResult.status === 'rejected') {
-      errors.push(`Ghost: ${ghostResult.reason?.message || 'Error desconocido'}`);
-    }
+      const errors: string[] = [];
+      if (assignResult.status === 'rejected') {
+        errors.push(`Asignación: ${assignResult.reason?.message || 'Error desconocido'}`);
+      }
+      if (ghostResult.status === 'rejected') {
+        errors.push(`Ghost: ${ghostResult.reason?.message || 'Error desconocido'}`);
+      }
 
-    if (errors.length === 0) {
-      setResult({ ok: true, message: 'Asignación y usuario ghost creados correctamente.' });
-    } else {
-      setResult({ ok: false, message: errors.join(' | ') });
+      if (errors.length === 0) {
+        setResult({ ok: true, message: 'Asignación y usuario ghost creados correctamente.' });
+      } else {
+        setResult({ ok: false, message: errors.join(' | ') });
+      }
+    } catch (err: any) {
+      setLoading(false);
+      setResult({ ok: false, message: err.message || 'Error crítico' });
     }
   };
 
@@ -67,17 +74,18 @@ const AsignarSoporteModal: React.FC<Props> = ({ open, onClose, tiendaName, store
     <Dialog
       open={open}
       onClose={handleClose}
+      fullScreen={isMobile}
       PaperProps={{
         sx: {
-          borderRadius: '12px',
+          borderRadius: isMobile ? 0 : '12px',
           width: '100%',
           maxWidth: '450px',
-          borderTop: '4px solid #db3b2b',
+          borderTop: isMobile ? 'none' : '4px solid #db3b2b',
           boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
         }
       }}
     >
-      <DialogContent sx={{ p: 6, textAlign: 'center' }}>
+      <DialogContent sx={{ p: isMobile ? 3 : 6, textAlign: 'center' }}>
         <h2 className="text-2xl font-black italic text-[#1e293b] tracking-tight mb-1 uppercase">
           ASIGNAR TIENDA
         </h2>
