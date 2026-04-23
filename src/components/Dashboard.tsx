@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { LogOut, Menu, X, Store } from 'lucide-react';
 import auth, { getUserRole } from '../utils/auth';
 import { UserRole } from '../models/roles';
