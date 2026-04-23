@@ -3,7 +3,6 @@ import { validateUserForm } from '../utils/validation';
 import { createUser } from '../services/userService';
 import { getUserRole } from '../utils/auth';
 import type { User, CreateUserPayload } from '../models/user';
-import 'react-phone-input-2/lib/style.css'
 
 type Props = {
 	onCreated?: (user: User) => void;
@@ -14,7 +13,6 @@ const CreateUser: React.FC<Props> = ({ onCreated }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [role, setRole] = useState('secondary_user');
-	const [phone, setPhone] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [errors, setErrors] = useState<Record<string, string>>({});
@@ -32,7 +30,7 @@ const CreateUser: React.FC<Props> = ({ onCreated }) => {
 		e.preventDefault();
 		setLoading(true);
 		setMessage(null);
-		const { valid, errors: vErrors } = validateUserForm({ name, email, password, role, phone });
+		const { valid, errors: vErrors } = validateUserForm({ name, email, password, role });
 		if (!valid) {
 			setErrors(vErrors);
 			const first = Object.values(vErrors)[0];
@@ -42,13 +40,12 @@ const CreateUser: React.FC<Props> = ({ onCreated }) => {
 		}
 		setErrors({});
 		try {
-			const result = await createUser({ name, email, password, role, phone } as CreateUserPayload);
+			const result = await createUser({ name, email, password, role } as CreateUserPayload);
 			setMessage('Usuario creado correctamente');
 			setName('');
 			setEmail('');
 			setPassword('');
 			setRole('secondary_user');
-			setPhone('');
 			setErrors({});
 			if (onCreated) onCreated(result);
 		} catch (error: any) {

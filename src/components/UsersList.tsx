@@ -3,8 +3,6 @@ import { useOutletContext } from 'react-router-dom';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Alert, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, IconButton, Skeleton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { X, MoreVertical, Edit2, UserMinus, UserCheck } from 'lucide-react';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
 import type { User } from '../models/user';
 import userService from '../services/userService';
 import { getUserRole } from '../utils/auth';
@@ -31,7 +29,6 @@ const UsersList: React.FC = () => {
 	const [editName, setEditName] = useState('');
 	const [editEmail, setEditEmail] = useState('');
 	const [editRole, setEditRole] = useState('');
-	const [editPhone, setEditPhone] = useState('');
 	const [editLoading, setEditLoading] = useState(false);
 
 	const [confirmOpen, setConfirmOpen] = useState(false);
@@ -66,18 +63,20 @@ const UsersList: React.FC = () => {
 		return () => clearTimeout(timer);
 	}, [isCollapsed]);
 
+	const loadUsers = async () => {
+		setLoading(true);
+		try {
+			const data = await userService.getUsers();
+			setUsers(data || []);
+		} catch (e: any) {
+			setError(e.message || 'Error cargando usuarios');
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		const load = async () => {
-			try {
-				const data = await userService.getUsers();
-				setUsers(data || []);
-			} catch (e: any) {
-				setError(e.message || 'Error cargando usuarios');
-			} finally {
-				setLoading(false);
-			}
-		};
-		load();
+		loadUsers();
 	}, []);
 
 	// Handlers de Usuario
@@ -98,13 +97,12 @@ const UsersList: React.FC = () => {
 	};
 
 	const handleOpenEdit = (id: string) => {
-		const u = users.find((x) => String(x.id) === String(id));
+		const u = users.find((x) => String(x._id || x.id) === String(id));
 		if (!u) return;
 		setEditingId(id);
 		setEditName(u.name);
 		setEditEmail(u.email);
 		setEditRole(u.role);
-		setEditPhone(u.phone || '');
 		setEditOpen(true);
 	};
 
@@ -113,9 +111,9 @@ const UsersList: React.FC = () => {
 		if (!editingId) return;
 		setEditLoading(true);
 		try {
-			const payload = { name: editName, email: editEmail, role: editRole, phone: editPhone };
+			const payload = { name: editName, email: editEmail, role: editRole };
 			const updated = await userService.updateUser(editingId, payload);
-			setUsers((prev) => prev.map((p) => (String(p.id) === String(editingId) ? { ...p, ...updated } : p)));
+			setUsers((prev) => prev.map((p) => (String(p._id || p.id) === String(editingId) ? { ...p, ...updated } : p)));
 			setSnack({ open: true, message: 'Usuario actualizado', severity: 'success' });
 			setEditOpen(false);
 		} catch (err: any) {
@@ -130,7 +128,7 @@ const UsersList: React.FC = () => {
 		setConfirmLoading(true);
 		try {
 			await userService.deleteUser(confirmId);
-			setUsers((prev) => prev.filter((p) => String(p.id) !== String(confirmId)));
+			setUsers((prev) => prev.filter((p) => String(p._id || p.id) !== String(confirmId)));
 			setSnack({ open: true, message: 'Usuario eliminado', severity: 'success' });
 			setConfirmOpen(false);
 		} catch (err: any) {
@@ -142,7 +140,7 @@ const UsersList: React.FC = () => {
 
 	// Transformación de datos para el Grid
 	const rows: UserRow[] = users.map((u, idx) => ({
-		id: u.id ? String(u.id) : String(idx + 1),
+		id: u._id ? String(u._id) : (u.id ? String(u.id) : String(idx + 1)),
 		name: u.name,
 		email: u.email,
 		role: u.disabled ? 'Deshabilitado' : (roleLabels[u.role] || u.role),
@@ -199,7 +197,13 @@ const UsersList: React.FC = () => {
 		<div className="w-full">
 			<h2 className="text-2xl font-bold mb-6">Usuarios</h2>
 			<div className="bg-white/5 border border-white/10 p-4 sm:p-6 rounded-2xl">
-				<div className="flex items-center justify-end mb-4">
+				<div className="flex items-center justify-end mb-4 gap-2">
+					<button
+						onClick={loadUsers}
+						className="px-4 py-2 rounded-xl border border-white/10 text-white-2 text-sm font-semibold transition-all hover:bg-white/5"
+					>
+						Actualizar lista
+					</button>
 					<button
 						onClick={() => setCreateOpen(true)}
 						className="px-6 py-2 rounded-xl btn-primary text-white-2 text-sm font-semibold transition-all hover:scale-[1.02]"
@@ -355,10 +359,6 @@ const UsersList: React.FC = () => {
 						<select value={editRole} onChange={e => setEditRole(e.target.value)} className="w-full p-2 rounded bg-gray-50 border">
 							{allowedRoles.map(r => <option key={r} value={r}>{roleLabels[r] || r}</option>)}
 						</select>
-						<div className="phone-wrapper">
-							<label className="text-xs text-gray-500 mb-1 block">Teléfono Internacional</label>
-							<PhoneInput country={'mx'} value={editPhone} onChange={setEditPhone} inputStyle={{ width: '100%' }} />
-						</div>
 					</form>
 				</DialogContent>
 				<DialogActions sx={{ p: 3 }}>
@@ -371,11 +371,11 @@ const UsersList: React.FC = () => {
 			{/* Confirmación Habilitar/Deshabilitar */}
 			<Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} PaperProps={{ sx: { borderRadius: '18px' } }}>
 				<DialogTitle>
-					{users.find(u => String(u.id) === String(confirmId))?.disabled ? '¿Habilitar usuario?' : '¿Deshabilitar usuario?'}
+					{users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? '¿Habilitar usuario?' : '¿Deshabilitar usuario?'}
 				</DialogTitle>
 				<DialogContent>
 					<p className="text-sm text-gray-500">
-						{users.find(u => String(u.id) === String(confirmId))?.disabled
+						{users.find(u => String(u._id || u.id) === String(confirmId))?.disabled
 							? 'Esta acción permitirá al usuario acceder al sistema nuevamente.'
 							: 'Esta acción restringirá el acceso del usuario al sistema.'}
 					</p>
@@ -385,12 +385,12 @@ const UsersList: React.FC = () => {
 					<button
 						onClick={handleConfirmDelete}
 						disabled={confirmLoading}
-						className={`px-6 py-2 text-white-2 rounded-xl text-sm font-semibold transition-all ${users.find(u => String(u.id) === String(confirmId))?.disabled ? 'bg-[#10b981]' : 'bg-[#db3b2b]'
+						className={`px-6 py-2 text-white-2 rounded-xl text-sm font-semibold transition-all ${users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? 'bg-[#10b981]' : 'bg-[#db3b2b]'
 							}`}
 					>
 						{confirmLoading
-							? (users.find(u => String(u.id) === String(confirmId))?.disabled ? 'Habilitando...' : 'Deshabilitando...')
-							: (users.find(u => String(u.id) === String(confirmId))?.disabled ? 'Habilitar' : 'Deshabilitar')}
+							? (users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? 'Habilitando...' : 'Deshabilitando...')
+							: (users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? 'Habilitar' : 'Deshabilitar')}
 					</button>
 				</DialogActions>
 			</Dialog>
