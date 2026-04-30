@@ -7,6 +7,7 @@ import FiscalInfoSection from './FiscalInfoSection';
 import OwnerInfoSection from './OwnerInfoSection';
 import ExpedienteFooter from './ExpedienteFooter';
 import BitacoraTab from './BitacoraTab';
+import UsuariosTab from './UsuariosTab';
 import storeService from '../../../services/storeService';
 import { StoreIdentityV3 } from '../../../models/store';
 
@@ -19,7 +20,7 @@ interface Props {
 const ExpedienteModal: React.FC<Props> = ({ open, onClose, tienda }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [activeTab, setActiveTab] = useState<'ficha' | 'bitacora'>('ficha');
+  const [activeTab, setActiveTab] = useState<'ficha' | 'bitacora' | 'usuarios'>('ficha');
   const [identity, setIdentity] = useState<StoreIdentityV3 | null>(null);
   const [sellerStatus, setSellerStatus] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
@@ -135,9 +136,21 @@ const ExpedienteModal: React.FC<Props> = ({ open, onClose, tienda }) => {
               onClose={onClose}
             />
           </div>
-        ) : (
+        ) : activeTab === 'bitacora' ? (
           <div className="animate-in fade-in duration-300">
             <BitacoraTab storeId={tienda.id} />
+            <div className="px-6 pb-6 flex justify-end">
+              <button
+                onClick={onClose}
+                className="bg-[#111827] text-white-2 px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg"
+              >
+                CERRAR EXPEDIENTE
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="animate-in fade-in duration-300">
+            <UsuariosTab users={tienda.users} />
             <div className="px-6 pb-6 flex justify-end">
               <button
                 onClick={onClose}

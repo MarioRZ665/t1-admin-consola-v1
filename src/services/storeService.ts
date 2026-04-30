@@ -215,6 +215,23 @@ export const removeUserSystem = async (sellerId: string | number, storeId: strin
   return await res.json();
 };
 
+/**
+ * Gets stores associated with a user by email
+ * Endpoint: GET /api/external/t1/identity/system/stores/users?email=...
+ */
+export const getStoresByUserEmail = async (email: string): Promise<any> => {
+  const res = await auth.fetch(`${API_URL}/external/t1/identity/system/stores/users?email=${encodeURIComponent(email)}`, {
+    method: 'GET',
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ message: 'Error obteniendo las tiendas del usuario' }));
+    throw new Error(data.message || 'Error al obtener las tiendas del usuario');
+  }
+
+  return await res.json();
+};
+
 export default {
   findStores,
   getStoreInfo,
@@ -227,4 +244,5 @@ export default {
   getAssignmentsByStore,
   removeAssignment,
   removeUserSystem,
+  getStoresByUserEmail,
 };

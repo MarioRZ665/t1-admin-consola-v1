@@ -39,7 +39,7 @@ const Tiendas: React.FC = () => {
     const columns: GridColDef<Tienda>[] = [
         {
             field: 'idt1',
-            headerName: 'IDT1',
+            headerName: 'ID-T1',
             width: 150,
         },
         {

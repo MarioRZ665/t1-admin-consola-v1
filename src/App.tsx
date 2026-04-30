@@ -8,6 +8,7 @@ import CreateUser from './components/CreateUser';
 import UsersList from './components/UsersList';
 import Profile from './components/Profile';
 import Tiendas from './components/tiendas/Tiendas';
+import UsuariosT1 from './components/UsuariosT1';
 import ProtectedRoute from './components/ProtectedRoute';
 import { UserRole } from './models/roles';
 
@@ -78,6 +79,7 @@ function App() {
           />
           <Route path="profile" element={<Profile />} />
           <Route path="tiendas" element={<Tiendas />} />
+          <Route path="usuarios-t1" element={<UsuariosT1 />} />
         </Route>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

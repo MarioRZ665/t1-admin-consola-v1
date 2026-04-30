@@ -206,7 +206,7 @@ const UsersList: React.FC = () => {
 					</button>
 					<button
 						onClick={() => setCreateOpen(true)}
-						className="px-6 py-2.5 rounded-xl bg-[#db3b2b] text-white font-semibold text-sm transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
+						className="px-6 py-2.5 rounded-xl bg-[#db3b2b] text-white-2 font-semibold text-sm transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
 					>
 						Crear usuario
 					</button>
@@ -230,14 +230,14 @@ const UsersList: React.FC = () => {
 							disableRowSelectionOnClick
 							sx={{
 								border: 'none',
-								'& .MuiDataGrid-cell': { 
-									color: 'inherit', 
+								'& .MuiDataGrid-cell': {
+									color: 'inherit',
 									borderBottom: '1px solid #f9fafb',
 									display: 'flex',
 									alignItems: 'center'
 								},
-								'& .MuiDataGrid-columnHeaders': { 
-									backgroundColor: 'white', 
+								'& .MuiDataGrid-columnHeaders': {
+									backgroundColor: 'white',
 									color: '#a3a3a3',
 									fontSize: '0.7rem',
 									fontWeight: '800',
@@ -286,14 +286,14 @@ const UsersList: React.FC = () => {
 					<ListItemIcon sx={{ minWidth: '32px !important' }}>
 						<Edit2 size={16} className="text-[#db3b2b]" />
 					</ListItemIcon>
-					<ListItemText 
-						primary="ACTUALIZAR" 
-						primaryTypographyProps={{ 
-							variant: 'caption', 
-							fontWeight: 800, 
+					<ListItemText
+						primary="ACTUALIZAR"
+						primaryTypographyProps={{
+							variant: 'caption',
+							fontWeight: 800,
 							color: '#db3b2b',
 							letterSpacing: '0.05em'
-						}} 
+						}}
 					/>
 				</MenuItem>
 				<div className="mx-2 border-t border-gray-50 my-0.5" />
@@ -308,14 +308,14 @@ const UsersList: React.FC = () => {
 						<ListItemIcon sx={{ minWidth: '32px !important' }}>
 							<UserCheck size={16} className="text-[#10b981]" />
 						</ListItemIcon>
-						<ListItemText 
-							primary="HABILITAR" 
-							primaryTypographyProps={{ 
-								variant: 'caption', 
-								fontWeight: 800, 
+						<ListItemText
+							primary="HABILITAR"
+							primaryTypographyProps={{
+								variant: 'caption',
+								fontWeight: 800,
 								color: '#10b981',
 								letterSpacing: '0.05em'
-							}} 
+							}}
 						/>
 					</MenuItem>
 				) : (
@@ -329,14 +329,14 @@ const UsersList: React.FC = () => {
 						<ListItemIcon sx={{ minWidth: '32px !important' }}>
 							<UserMinus size={16} className="text-[#db3b2b]" />
 						</ListItemIcon>
-						<ListItemText 
-							primary="DESHABILITAR" 
-							primaryTypographyProps={{ 
-								variant: 'caption', 
-								fontWeight: 800, 
+						<ListItemText
+							primary="DESHABILITAR"
+							primaryTypographyProps={{
+								variant: 'caption',
+								fontWeight: 800,
 								color: '#db3b2b',
 								letterSpacing: '0.05em'
-							}} 
+							}}
 						/>
 					</MenuItem>
 				)}

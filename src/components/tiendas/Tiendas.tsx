@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MoreVertical, ChevronDown, Eye, UserPlus, UserMinus } from 'lucide-react';
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid';
 import ExpedienteModal from './expediente/ExpedienteModal';
 import AsignarSoporteModal from './AsignarSoporteModal';
 // import UsersListModal from './UsersListModal';
@@ -23,7 +23,8 @@ const Tiendas: React.FC = () => {
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const [assignOpen, setAssignOpen] = useState(false);
-    
+    const [assignedStoreIds, setAssignedStoreIds] = useState<Set<number>>(new Set());
+
     // New state for Expanded Users list
     // const [usersModalOpen, setUsersModalOpen] = useState(false);
     // const [tiendaForUsers, setTiendaForUsers] = useState<StoreDetail | null>(null);
@@ -41,7 +42,7 @@ const Tiendas: React.FC = () => {
             } else {
                 data = await storeService.findStores(cleanQuery);
             }
-            
+
             setTiendas(data);
         } catch (err: any) {
             console.error('Search error:', err);
@@ -52,8 +53,20 @@ const Tiendas: React.FC = () => {
         }
     };
 
+    const fetchAssignedStores = async () => {
+        try {
+            const response = await storeService.getStoresByUserEmail('soporte@t1envios.com');
+            const stores = response?.data?.stores || [];
+            const ids = new Set<number>(stores.map((s: any) => s.id));
+            setAssignedStoreIds(ids);
+        } catch (err) {
+            console.error('Error fetching assigned stores:', err);
+        }
+    };
+
     React.useEffect(() => {
         fetchTiendas();
+        fetchAssignedStores();
     }, []);
 
 
@@ -70,7 +83,7 @@ const Tiendas: React.FC = () => {
     const handleCategoryClick = (event: React.MouseEvent<HTMLElement>) => {
         setCategoryAnchorEl(event.currentTarget);
     };
-    
+
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -92,7 +105,7 @@ const Tiendas: React.FC = () => {
     const columns: GridColDef<StoreDetail>[] = [
         {
             field: 'id',
-            headerName: 'IDT1',
+            headerName: 'ID-T1',
             width: 150,
             renderCell: (params: GridRenderCellParams<StoreDetail>) => (
                 <span className="font-extrabold text-[#db3b2b] text-base">{params.value}</span>
@@ -110,56 +123,16 @@ const Tiendas: React.FC = () => {
             field: 'users',
             headerName: 'ASIGNACIÓN',
             flex: 1.5,
-            renderCell: (params: GridRenderCellParams<StoreDetail>) => (
-                <div className="flex items-center w-full h-full gap-2 pr-4 relative group/cell">
-                    <div className="flex flex-col justify-center flex-1 h-full py-1 overflow-auto custom-scrollbar">
-                        {params.value && params.value.length > 0 ? (
-                            params.value.map((user: any, idx: number) => (
-                                <div key={user._id || idx} className="flex items-center gap-2 group h-5 min-w-max">
-                                    <span className="w-1 h-1 rounded-full bg-[#db3b2b] shrink-0 opacity-60 group-hover:opacity-100 transition-opacity" />
-                                    <span className="text-[11px] text-gray-400 font-bold hover:text-gray-600 transition-colors">
-                                        {user.email}
-                                    </span>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="flex items-center gap-2 h-5 opacity-40">
-                                <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
-                                <span className="text-[10px] text-gray-300 font-bold uppercase italic tracking-widest">Sin asignar</span>
-                            </div>
-                        )}
-                    </div>
-                    {/* 
-                        params.value && params.value.length > 0 && (
-                        <Tooltip title="Ampliar lista de responsables" arrow placement="top">
-                            <IconButton 
-                                size="small" 
-                                onClick={() => handleExpandUsers(params.row)}
-                                sx={{ 
-                                    backgroundColor: '#f8fafc',
-                                    border: '1px solid #e2e8f0',
-                                    padding: '6px',
-                                    transition: 'all 0.1s ease',
-                                    color: '#db3b2b',
-                                    display: 'none',
-                                    '.MuiDataGrid-row:hover &': {
-                                        display: 'flex'
-                                    },
-                                    '&:hover': {
-                                        backgroundColor: '#db3b2b',
-                                        color: 'white',
-                                        borderColor: '#db3b2b',
-                                        boxShadow: '0 4px 12px rgba(219, 59, 43, 0.2)'
-                                    }
-                                }}
-                            >
-                                <Maximize2 size={14} />
-                            </IconButton>
-                        </Tooltip>
-                    )
-                    */}
-                </div>
-            )
+            renderCell: (params: GridRenderCellParams<StoreDetail>) => {
+                const isAssigned = assignedStoreIds.has(params.row.id);
+                return isAssigned ? (
+                    <span className="text-sm font-medium text-gray-600">
+                        soporte@t1envios.com
+                    </span>
+                ) : (
+                    <span className="text-sm text-gray-400 italic">Sin asignar</span>
+                );
+            }
         },
         {
             field: 'actions',
@@ -200,7 +173,7 @@ const Tiendas: React.FC = () => {
                     }
                 `}
             </style>
-            
+
             {/* Search Bar Section */}
             <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col md:flex-row items-stretch md:items-center gap-4 border border-gray-50">
                 <div className="flex-1 flex items-center border border-gray-200 rounded-lg overflow-hidden h-11 bg-white">
@@ -290,6 +263,13 @@ const Tiendas: React.FC = () => {
                         loading={loading}
                         disableRowSelectionOnClick
                         pageSizeOptions={[10, 25, 50]}
+                        slots={{ toolbar: GridToolbar }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                                quickFilterProps: { debounceMs: 250 },
+                            },
+                        }}
                         initialState={{
                             pagination: {
                                 paginationModel: { pageSize: 10 },
@@ -298,6 +278,10 @@ const Tiendas: React.FC = () => {
                         rowHeight={64}
                         sx={{
                             border: 'none',
+                            '& .MuiDataGrid-toolbarContainer': {
+                                padding: '16px',
+                                borderBottom: '1px solid #f3f4f6',
+                            },
                             '& .MuiDataGrid-columnHeaders': {
                                 backgroundColor: 'white',
                                 color: '#a3a3a3',
@@ -405,8 +389,9 @@ const Tiendas: React.FC = () => {
 
                             // Borrar la asignación en el sistema local
                             await storeService.removeAssignment(t.id);
-                            
+
                             await fetchTiendas(searchTerm);
+                            await fetchAssignedStores();
                         } catch (err: any) {
                             console.error('Error removing assignment:', err);
                             setError(err.message || 'Error al quitar la asignación');
@@ -438,11 +423,14 @@ const Tiendas: React.FC = () => {
 
             <AsignarSoporteModal
                 open={assignOpen}
-                onClose={() => setAssignOpen(false)}
+                onClose={() => {
+                    setAssignOpen(false);
+                    fetchAssignedStores();
+                }}
                 tiendaName={selectedTienda?.name || ''}
                 storeId={selectedTienda?.id || ''}
             />
-            
+
             {/* 
             <UsersListModal 
                 open={usersModalOpen}

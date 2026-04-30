@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Store } from 'lucide-react';
+import { LogOut, Menu, X, Store, Users } from 'lucide-react';
 import auth, { getUserRole } from '../utils/auth';
 import { UserRole } from '../models/roles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -78,6 +78,14 @@ const Dashboard: React.FC = () => {
 							onClick={() => setSidebarOpen(false)}
 						/>
 					)}
+					<SidebarItem
+						icon={<Users size={20} />}
+						label="Usuarios T1"
+						to="/dashboard/usuarios-t1"
+						active={location.pathname === '/dashboard/usuarios-t1'}
+						isCollapsed={isCollapsed}
+						onClick={() => setSidebarOpen(false)}
+					/>
 					<SidebarItem
 						icon={<FontAwesomeIcon icon={faUser} style={{ fontSize: '18px' }} />}
 						label="Perfil"
