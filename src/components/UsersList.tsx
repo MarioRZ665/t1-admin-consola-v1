@@ -49,12 +49,11 @@ const UsersList: React.FC = () => {
 	const roleLabels: Record<string, string> = {
 		secondary_user: 'Usuario secundario',
 		super_user: 'Super usuario',
-		ADMIN: 'Administrador',
 	};
 
 	const allowedRoles = currentRole === 'super_user'
-		? ['super_user', 'secondary_user', 'ADMIN']
-		: ['secondary_user', 'ADMIN'];
+		? ['super_user', 'secondary_user']
+		: ['secondary_user'];
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -80,8 +79,8 @@ const UsersList: React.FC = () => {
 	}, []);
 
 	// Handlers de Usuario
-	const handleUserCreated = (user: User) => {
-		setUsers((prev) => [user, ...prev]);
+	const handleUserCreated = async () => {
+		await loadUsers();
 		setSnack({ open: true, message: 'Usuario creado correctamente', severity: 'success' });
 		setTimeout(() => setCreateOpen(false), 1200);
 	};

@@ -21,10 +21,9 @@ const CreateUser: React.FC<Props> = ({ onCreated }) => {
 	const roleLabels: Record<string, string> = {
 		secondary_user: 'Usuario secundario',
 		super_user: 'Super usuario',
-		ADMIN: 'Administrador',
 	};
 
-	const allowedRoles = currentRole === 'super_user' ? ['super_user', 'secondary_user', 'ADMIN'] : ['secondary_user', 'ADMIN'];
+	const allowedRoles = currentRole === 'super_user' ? ['super_user', 'secondary_user'] : ['secondary_user'];
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
