@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { MoreVertical, ChevronDown, Eye, UserPlus, UserMinus } from 'lucide-react';
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';

@@ -1,7 +1,8 @@
+'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import authService from '../services/authService';
 
 const Login: React.FC = () => {
@@ -9,7 +10,7 @@ const Login: React.FC = () => {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
+	const router = useRouter();
 
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -20,7 +21,7 @@ const Login: React.FC = () => {
 			const token = data.access_token || data.token;
 			if (token) {
 				localStorage.setItem('jwt', token);
-				navigate('/dashboard');
+				router.push('/dashboard');
 			} else {
 				throw new Error(data.message || 'No token received');
 			}

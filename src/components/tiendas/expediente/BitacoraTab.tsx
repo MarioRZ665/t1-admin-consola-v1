@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import storeService from '../../../services/storeService';

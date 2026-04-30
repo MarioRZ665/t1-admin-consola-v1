@@ -1,13 +1,21 @@
+'use client';
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { LogOut, Menu, X, Store, Users } from 'lucide-react';
 import auth, { getUserRole } from '../utils/auth';
 import { UserRole } from '../models/roles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 
-const Dashboard: React.FC = () => {
-	const location = useLocation();
+import { DashboardProvider } from './DashboardContext';
+
+interface DashboardProps {
+  children?: React.ReactNode;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ children }) => {
+	const pathname = usePathname();
 	const userRole = getUserRole();
 	const isAdmin = userRole === UserRole.SUPER_USER;
 
@@ -64,7 +72,7 @@ const Dashboard: React.FC = () => {
 						icon={<Store size={20} />}
 						label="Tiendas"
 						to="/dashboard/tiendas"
-						active={location.pathname === '/dashboard/tiendas' || location.pathname === '/dashboard'}
+						active={pathname === '/dashboard/tiendas' || pathname === '/dashboard'}
 						isCollapsed={isCollapsed}
 						onClick={() => setSidebarOpen(false)}
 					/>
@@ -73,7 +81,7 @@ const Dashboard: React.FC = () => {
 							icon={<FontAwesomeIcon icon={faUserPlus} style={{ fontSize: '18px' }} />}
 							label="Usuarios"
 							to="/dashboard/users"
-							active={location.pathname === '/dashboard/users'}
+							active={pathname === '/dashboard/users' || pathname.startsWith('/dashboard/users')}
 							isCollapsed={isCollapsed}
 							onClick={() => setSidebarOpen(false)}
 						/>
@@ -82,7 +90,7 @@ const Dashboard: React.FC = () => {
 						icon={<Users size={20} />}
 						label="Usuarios T1"
 						to="/dashboard/usuarios-t1"
-						active={location.pathname === '/dashboard/usuarios-t1'}
+						active={pathname === '/dashboard/usuarios-t1'}
 						isCollapsed={isCollapsed}
 						onClick={() => setSidebarOpen(false)}
 					/>
@@ -90,7 +98,7 @@ const Dashboard: React.FC = () => {
 						icon={<FontAwesomeIcon icon={faUser} style={{ fontSize: '18px' }} />}
 						label="Perfil"
 						to="/dashboard/profile"
-						active={location.pathname === '/dashboard/profile'}
+						active={pathname === '/dashboard/profile'}
 						isCollapsed={isCollapsed}
 						onClick={() => setSidebarOpen(false)}
 					/>
@@ -125,7 +133,9 @@ const Dashboard: React.FC = () => {
 				<div className="p-4 sm:p-6 lg:p-8 lg:pl-20">
 					<div className="max-w-[1600px] mx-auto">
 						<div className="bg-white rounded-2xl border border-gray-100 shadow-sm min-h-[calc(100vh-8rem)]">
-							<Outlet context={{ isCollapsed }} />
+							<DashboardProvider isCollapsed={isCollapsed}>
+								{children}
+							</DashboardProvider>
 						</div>
 					</div>
 				</div>
@@ -140,8 +150,6 @@ const Dashboard: React.FC = () => {
 		</div>
 	);
 };
-
-
 
 const SidebarItem = ({ icon, label, active = false, to, isCollapsed, onClick }: any) => {
 	const base = `flex items-center gap-3 p-3 rounded-xl transition-all overflow-hidden ${isCollapsed ? 'lg:justify-center' : 'lg:justify-start'}`;
@@ -163,7 +171,7 @@ const SidebarItem = ({ icon, label, active = false, to, isCollapsed, onClick }: 
 
 	if (to) {
 		return (
-			<Link to={to} className={base} style={activeStyle} onClick={onClick}>
+			<Link href={to} className={base} style={activeStyle} onClick={onClick}>
 				{content}
 			</Link>
 		);
@@ -176,5 +184,5 @@ const SidebarItem = ({ icon, label, active = false, to, isCollapsed, onClick }: 
 	);
 };
 
-
 export default Dashboard;
+

@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Dialog, DialogContent, IconButton } from '@mui/material';
 import { X, User, Mail } from 'lucide-react';

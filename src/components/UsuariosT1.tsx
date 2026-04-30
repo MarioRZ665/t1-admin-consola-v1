@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Users, Search, Store, Phone, Mail, User as UserIcon, Tag, ShieldCheck, Building2 } from 'lucide-react';
 import { Button, CircularProgress, Alert, Chip, Divider, Skeleton } from '@mui/material';

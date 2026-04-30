@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Dialog, DialogContent, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import ExpedienteHeader from './ExpedienteHeader';

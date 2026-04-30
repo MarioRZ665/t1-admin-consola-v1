@@ -1,5 +1,6 @@
+'use client';
 import React, { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useDashboard } from './DashboardContext';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Alert, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, IconButton, Skeleton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { X, MoreVertical, Edit2, UserMinus, UserCheck } from 'lucide-react';
@@ -22,7 +23,7 @@ const UsersList: React.FC = () => {
 	const [users, setUsers] = useState<User[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const { isCollapsed } = useOutletContext<{ isCollapsed: boolean }>();
+	const { isCollapsed } = useDashboard();
 
 	const [editOpen, setEditOpen] = useState(false);
 	const [editingId, setEditingId] = useState<string | null>(null);

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { validateUserForm } from '../utils/validation';
 import { createUser } from '../services/userService';

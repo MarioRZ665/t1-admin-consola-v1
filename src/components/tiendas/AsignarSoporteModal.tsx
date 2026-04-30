@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Dialog, DialogContent, MenuItem, Select, FormControl, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { CheckCircle, XCircle } from 'lucide-react';

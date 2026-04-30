@@ -1,5 +1,6 @@
+'use client';
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import auth, { getUserRole } from '../utils/auth';
 import { UserRole } from '../models/roles';
 
@@ -9,15 +10,27 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
-	if (!auth.isAuthenticated()) {
-		return <Navigate to="/auth/login" replace />;
-	}
+	const router = useRouter();
+	const [authorized, setAuthorized] = React.useState(false);
 
-	if (requiredRole) {
-		const userRole = getUserRole();
-		if (userRole !== requiredRole) {
-			return <Navigate to="/dashboard" replace />;
+	React.useEffect(() => {
+		if (!auth.isAuthenticated()) {
+			router.replace('/auth/login');
+			return;
 		}
+
+		if (requiredRole) {
+			const userRole = getUserRole();
+			if (userRole !== requiredRole) {
+				router.replace('/dashboard');
+				return;
+			}
+		}
+		setAuthorized(true);
+	}, [router, requiredRole]);
+
+	if (!authorized) {
+		return null; // Or a loading spinner
 	}
 
 	return <>{children}</>;
