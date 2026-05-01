@@ -1,18 +1,22 @@
 # Dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
+jspm_packages/
 
 # Testing
-/coverage
+coverage/
+__snapshots__/
 
-# Next.js build and cache
-/.next/
-/out/
+# Next.js
+.next/
+out/
+.turbo/
 
 # Production
-/build
-/dist
+build/
+dist/
+dist-ssr/
 
 # Logs
 *.log
@@ -21,12 +25,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Environment variables
+# Environment Variables
 .env
-*.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+!.env.example
 
 # Vercel
 .vercel
@@ -36,6 +42,7 @@ pnpm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
+next-env.d.ts
 
 # IDEs and Editors
 .vscode/*
@@ -50,6 +57,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 .eslintcache
+.stylelintcache
 
 # OS Files
 .DS_Store
@@ -62,9 +70,6 @@ Thumbs.db
 
 # Other
 .vite/
-dist-ssr/
-jspm_packages/
 .npm
-.stylelintcache
-__snapshots__/
-
+.yarn-integrity
+.cache/

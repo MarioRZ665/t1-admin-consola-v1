@@ -1,5 +1,5 @@
-// Read API base url from Vite env variable VITE_API_URL, fallback to localhost
-const rawApi = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+// Read API base url from Next.js env variable NEXT_PUBLIC_API_URL, fallback to localhost
+const rawApi = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 export const API_URL = rawApi.replace(/\/$/, '') + '/api';
 
 // Decodifica el payload de un JWT y devuelve el objeto (cliente)

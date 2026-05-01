@@ -8,9 +8,12 @@ import type { Assignment } from '../models/assignment';
  */
 export const findStores = async (query: string): Promise<StoreDetail[]> => {
   const cleanQuery = query.trim();
-  const url = cleanQuery
-    ? `${API_URL}/external/t1/store/find/${encodeURIComponent(cleanQuery)}`
-    : `${API_URL}/external/t1/store/find`;
+  
+  if (!cleanQuery) {
+    return []; // Return empty if no query, or adjust if there's a "get all" endpoint
+  }
+
+  const url = `${API_URL}/external/t1/store/find?name=${encodeURIComponent(cleanQuery)}`;
 
   const res = await auth.fetch(url, {
     method: 'GET',
