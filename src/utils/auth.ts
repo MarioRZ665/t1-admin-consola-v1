@@ -1,6 +1,11 @@
-// Read API base url from Next.js env variable NEXT_PUBLIC_API_URL, fallback to localhost
-const rawApi = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-export const API_URL = rawApi.replace(/\/$/, '') + '/api';
+// Read API base url from Next.js env variable NEXT_PUBLIC_API_URL
+const rawApi = process.env.NEXT_PUBLIC_API_URL;
+
+if (!rawApi && typeof window !== 'undefined') {
+  console.warn('NEXT_PUBLIC_API_URL is not defined! Falling back to localhost:3000');
+}
+
+export const API_URL = (rawApi || 'http://localhost:3000').replace(/\/$/, '') + '/api';
 
 // Decodifica el payload de un JWT y devuelve el objeto (cliente)
 export const getUserFromToken = (): any | null => {
