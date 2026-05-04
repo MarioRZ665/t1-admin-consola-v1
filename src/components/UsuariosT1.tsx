@@ -29,7 +29,8 @@ const UsuariosT1: React.FC = () => {
     }
   };
 
-  const userData = results?.data;
+  // Como la búsqueda es por email, tomamos el primer resultado del array devuelto por el servicio o el objeto directo
+  const userData = Array.isArray(results) ? results[0] : results;
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -97,26 +98,50 @@ const UsuariosT1: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-        <form onSubmit={handleSearch} className="flex gap-4 items-center">
-          <div className="relative flex-1">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Buscar por Email (ejemplo@correo.com)"
-              className="w-full px-3 py-2 rounded bg-white/5 border border-white/10"
-            />
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+        <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 items-end">
+          <div className="flex-1 w-full">
+            <label htmlFor="search-email" className="block text-sm font-medium text-gray-700 mb-2 ml-1">
+              Correo Electrónico
+            </label>
+            <div className="relative group">
+
+              <input
+                id="search-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="ejemplo@correo.com"
+                className="w-full pl-11 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#db3b2b] focus:ring-4 focus:ring-red-50 transition-all outline-none text-gray-900 placeholder:text-gray-400"
+                required
+              />
+            </div>
           </div>
           <Button
             type="submit"
             variant="contained"
-            color="error"
-            className="px-4 py-2 rounded btn-primary text-white-2"
             disabled={loading || !email.trim()}
+            sx={{
+              height: '52px',
+              px: 4,
+              borderRadius: '12px',
+              backgroundColor: '#db3b2b',
+              textTransform: 'none',
+              fontWeight: 600,
+              fontSize: '1rem',
+              boxShadow: '0 4px 12px rgba(219, 59, 43, 0.2)',
+              '&:hover': {
+                backgroundColor: '#b92d1f',
+                boxShadow: '0 6px 16px rgba(219, 59, 43, 0.3)',
+              },
+              '&.Mui-disabled': {
+                backgroundColor: '#f3f4f6',
+                color: '#9ca3af'
+              }
+            }}
             startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Search size={20} />}
           >
-            Buscar
+            {loading ? 'Buscando...' : 'Buscar Tiendas'}
           </Button>
         </form>
       </div>
@@ -233,8 +258,8 @@ const UsuariosT1: React.FC = () => {
         </div>
       )}
 
-      {!userData && !loading && !error && (
-        <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-8 flex flex-col items-center justify-center text-center">
+      {!userData && !loading && !error && results === null && (
+        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-12 flex flex-col items-center justify-center text-center">
           <div className="bg-gray-50 p-6 rounded-full mb-6">
             <Search size={48} className="text-gray-300" />
           </div>
@@ -242,6 +267,26 @@ const UsuariosT1: React.FC = () => {
           <p className="text-gray-500 max-w-md mx-auto">
             Ingresa un correo electrónico en la barra de búsqueda para ver el detalle y las tiendas asociadas al usuario.
           </p>
+        </div>
+      )}
+
+      {!userData && !loading && !error && results !== null && (
+        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-12 flex flex-col items-center justify-center text-center">
+          <div className="bg-red-50 p-6 rounded-full mb-6">
+            <UserIcon size={48} className="text-[#db3b2b]" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Usuario no encontrado</h2>
+          <p className="text-gray-500 max-w-md mx-auto">
+            No se encontró ningún usuario registrado con el correo <strong>{email}</strong>.
+            Por favor, verifica que el correo sea correcto e intenta de nuevo.
+          </p>
+          <Button
+            variant="text"
+            onClick={() => { setResults(null); setEmail(''); }}
+            sx={{ mt: 2, color: '#db3b2b', textTransform: 'none', fontWeight: 600 }}
+          >
+            Limpiar búsqueda
+          </Button>
         </div>
       )}
     </div>

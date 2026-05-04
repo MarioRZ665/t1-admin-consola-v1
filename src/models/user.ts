@@ -1,11 +1,21 @@
+export interface AuditFields {
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
+}
+
 export interface User {
+  _id: string;
   id?: string;
-  _id?: string;
   name: string;
   email: string;
   role: string;
   phone?: string;
-  createdAt?: string;
+  is_active: boolean;
+  is_email_verified?: boolean;
+  audit_fields?: AuditFields;
+  /** @deprecated use is_active instead */
   disabled?: boolean;
 }
 

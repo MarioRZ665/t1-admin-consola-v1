@@ -17,7 +17,7 @@ const Tiendas: React.FC = () => {
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [categoryAnchorEl, setCategoryAnchorEl] = useState<null | HTMLElement>(null);
-    const [searchCategory, setSearchCategory] = useState<'Nombre' | 'IDT1'>('Nombre');
+    const [searchCategory, setSearchCategory] = useState<'Nombre' | 'IDT1' | 'Email'>('Nombre');
 
     const [expedienteOpen, setExpedienteOpen] = useState(false);
     const [selectedTienda, setSelectedTienda] = useState<StoreDetail | null>(null);
@@ -38,7 +38,13 @@ const Tiendas: React.FC = () => {
             const cleanQuery = query.trim();
             let data: StoreDetail[] = [];
 
-            if (searchCategory === 'IDT1' && cleanQuery) {
+            if (searchCategory === 'Email' && cleanQuery) {
+                const response = await storeService.getStoresByUserEmail(cleanQuery);
+                // Si la respuesta es un array, tomamos las tiendas del primer usuario
+                // Si es un objeto, tomamos sus tiendas
+                const userData = Array.isArray(response) ? response[0] : response;
+                data = userData?.stores || [];
+            } else if (searchCategory === 'IDT1' && cleanQuery) {
                 data = await storeService.getStoreInfo(cleanQuery);
             } else {
                 data = await storeService.findStores(cleanQuery);
@@ -57,7 +63,9 @@ const Tiendas: React.FC = () => {
     const fetchAssignedStores = async () => {
         try {
             const response = await storeService.getStoresByUserEmail('soporte@t1envios.com');
-            const stores = response?.data?.stores || [];
+            // storeService.getStoresByUserEmail ya retorna response.data
+            const userData = Array.isArray(response) ? response[0] : response;
+            const stores = userData?.stores || [];
             const ids = new Set<number>(stores.map((s: any) => s.id));
             setAssignedStoreIds(ids);
         } catch (err) {
@@ -89,7 +97,7 @@ const Tiendas: React.FC = () => {
         setAnchorEl(null);
     };
 
-    const handleCategoryClose = (category?: 'Nombre' | 'IDT1') => {
+    const handleCategoryClose = (category?: 'Nombre' | 'IDT1' | 'Email') => {
         if (category) setSearchCategory(category);
         setSearchTerm('');
         setCategoryAnchorEl(null);
@@ -220,6 +228,7 @@ const Tiendas: React.FC = () => {
                     >
                         <MenuItem onClick={() => handleCategoryClose('Nombre')} selected={searchCategory === 'Nombre'}>Nombre</MenuItem>
                         <MenuItem onClick={() => handleCategoryClose('IDT1')} selected={searchCategory === 'IDT1'}>IDT1</MenuItem>
+                        <MenuItem onClick={() => handleCategoryClose('Email')} selected={searchCategory === 'Email'}>Email</MenuItem>
                     </Menu>
                     <input
                         type="text"

@@ -18,7 +18,7 @@ const Login: React.FC = () => {
 		setLoading(true);
 		try {
 			const data = await authService.login(email, password);
-			const token = data.access_token || data.token;
+			const token = data.accessToken || data.token;
 			if (token) {
 				localStorage.setItem('jwt', token);
 				router.push('/dashboard');

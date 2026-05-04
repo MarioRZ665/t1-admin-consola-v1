@@ -26,7 +26,8 @@ export const getUsers = async (): Promise<User[]> => {
 		throw err;
 	}
 
-	return res.json();
+	const body = await res.json();
+	return body.data ?? body;
 };
 
 export const updateUser = async (id: string, payload: Partial<CreateUserPayload>): Promise<User> => {

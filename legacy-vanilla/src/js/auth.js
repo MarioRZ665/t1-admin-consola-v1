@@ -17,7 +17,7 @@ export const auth = {
       }
 
       const data = await response.json();
-      const token = data.access_token || data.token; // Handle different backend responses
+      const token = data.accessToken || data.token; // Handle different backend responses
 
       if (token) {
         localStorage.setItem("jwt", token);

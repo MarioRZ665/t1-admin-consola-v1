@@ -5,7 +5,7 @@ if (!rawApi && typeof window !== 'undefined') {
   console.warn('NEXT_PUBLIC_API_URL is not defined! Falling back to localhost:3000');
 }
 
-export const API_URL = (rawApi || 'http://localhost:3000').replace(/\/$/, '') + '/api';
+export const API_URL = (rawApi || 'http://localhost:3000').replace(/\/$/, '');
 
 // Decodifica el payload de un JWT y devuelve el objeto (cliente)
 export const getUserFromToken = (): any | null => {
@@ -52,7 +52,7 @@ export const auth = {
       }
 
       const data = await response.json();
-      const token = data.access_token || data.token;
+      const token = data.accessToken || data.token;
 
       if (token) {
         localStorage.setItem("jwt", token);

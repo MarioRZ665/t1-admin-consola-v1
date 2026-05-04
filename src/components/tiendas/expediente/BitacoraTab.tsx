@@ -74,8 +74,8 @@ const BitacoraTab: React.FC<Props> = ({ storeId }) => {
               </tr>
             </thead>
             <tbody>
-              {assignments.map((a) => (
-                <tr key={a._id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
+              {assignments.map((a, idx) => (
+                <tr key={a._id ?? idx} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
                   <Td className="text-gray-400 italic font-medium">{formatDate(a.audit_fields.created_at)}</Td>
                   <Td className="text-gray-500 italic lowercase">{a.user_id?.email || '—'}</Td>
                   <Td>

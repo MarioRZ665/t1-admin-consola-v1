@@ -8,7 +8,7 @@ import type { Assignment } from '../models/assignment';
  */
 export const findStores = async (query: string): Promise<StoreDetail[]> => {
   const cleanQuery = query.trim();
-  
+
   if (!cleanQuery) {
     return []; // Return empty if no query, or adjust if there's a "get all" endpoint
   }
@@ -24,10 +24,15 @@ export const findStores = async (query: string): Promise<StoreDetail[]> => {
     throw new Error(data.message || 'Error en la búsqueda');
   }
 
-  const response: StoreSearchResponse = await res.json();
-  
-  // Return values as a flat array of stores (each containing its users array)
-  return Object.values(response);
+  const raw = await res.json();
+  // La API puede devolver { data: { id: StoreDetail } } o directamente { id: StoreDetail }
+  const storesMap: StoreSearchResponse = raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data)
+    ? raw.data
+    : raw;
+
+  return Object.values(storesMap).filter(
+    (v): v is StoreDetail => typeof v === 'object' && v !== null && 'id' in v
+  );
 };
 
 /**
@@ -44,10 +49,23 @@ export const getStoreInfo = async (storeId: number | string): Promise<StoreDetai
     throw new Error(data.message || 'Error obteniendo información');
   }
 
-  const response: StoreSearchResponse = await res.json();
+  const raw = await res.json();
+  // Respuesta: { metadata: {...}, data: { id_t1, id_cs, id_as400, store_name } }
+  const info = raw?.data ?? raw;
 
-  // Return values as a flat array of stores
-  return Object.values(response);
+  if (info?.id_t1) {
+    // Mapear al formato StoreDetail
+    return [{
+      id: info.id_t1,
+      name: info.store_name || `Tienda ${info.id_t1}`,
+      users: info.users || [],
+    }];
+  }
+
+  // Fallback: si viniera como mapa { "123": { id, name } }
+  return Object.values(info as StoreSearchResponse).filter(
+    (v): v is StoreDetail => typeof v === 'object' && v !== null && 'id' in v
+  );
 };
 
 /**
@@ -60,6 +78,8 @@ export const getStoreIdentity = async (storeId: number | string): Promise<StoreI
   });
 
   if (!res.ok) {
+    console.log("ERROR");
+    console.log(res);
     const data = await res.json().catch(() => ({ message: 'Error obteniendo identidad v3' }));
     throw new Error(data.message || 'Error obteniendo identidad detallada');
   }
@@ -223,7 +243,7 @@ export const removeUserSystem = async (sellerId: string | number, storeId: strin
  * Endpoint: GET /api/external/t1/identity/system/stores/users?email=...
  */
 export const getStoresByUserEmail = async (email: string): Promise<any> => {
-  const res = await auth.fetch(`${API_URL}/external/t1/identity/system/stores/users?email=${encodeURIComponent(email)}`, {
+  const res = await auth.fetch(`${API_URL}/external/t1/identity/system/stores/users?email=${email}`, {
     method: 'GET',
   });
 
@@ -232,7 +252,8 @@ export const getStoresByUserEmail = async (email: string): Promise<any> => {
     throw new Error(data.message || 'Error al obtener las tiendas del usuario');
   }
 
-  return await res.json();
+  const response = await res.json();
+  return response.data;
 };
 
 export default {

@@ -143,10 +143,10 @@ const UsersList: React.FC = () => {
 		id: u._id ? String(u._id) : (u.id ? String(u.id) : String(idx + 1)),
 		name: u.name,
 		email: u.email,
-		role: u.disabled ? 'Deshabilitado' : (roleLabels[u.role] || u.role),
+		role: u.is_active === false ? 'Deshabilitado' : (roleLabels[u.role] || u.role),
 		phone: u.phone || '',
-		createdAt: u.createdAt ? new Date(u.createdAt).toLocaleString() : '-',
-		_disabled: Boolean(u.disabled),
+		createdAt: u.audit_fields?.created_at ? new Date(u.audit_fields.created_at).toLocaleString() : '-',
+		_disabled: u.is_active === false,
 	}));
 
 	// Definición de Columnas
@@ -297,7 +297,7 @@ const UsersList: React.FC = () => {
 					/>
 				</MenuItem>
 				<div className="mx-2 border-t border-gray-50 my-0.5" />
-				{users.find(u => String(u.id) === String(selectedUserId))?.disabled ? (
+				{users.find(u => String(u._id || u.id) === String(selectedUserId))?.is_active === false ? (
 					<MenuItem onClick={() => {
 						if (selectedUserId) {
 							setConfirmId(selectedUserId);
@@ -372,11 +372,11 @@ const UsersList: React.FC = () => {
 			{/* Confirmación Habilitar/Deshabilitar */}
 			<Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} PaperProps={{ sx: { borderRadius: '18px' } }}>
 				<DialogTitle>
-					{users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? '¿Habilitar usuario?' : '¿Deshabilitar usuario?'}
+					{users.find(u => String(u._id || u.id) === String(confirmId))?.is_active === false ? '¿Habilitar usuario?' : '¿Deshabilitar usuario?'}
 				</DialogTitle>
 				<DialogContent>
 					<p className="text-sm text-gray-500">
-						{users.find(u => String(u._id || u.id) === String(confirmId))?.disabled
+						{users.find(u => String(u._id || u.id) === String(confirmId))?.is_active === false
 							? 'Esta acción permitirá al usuario acceder al sistema nuevamente.'
 							: 'Esta acción restringirá el acceso del usuario al sistema.'}
 					</p>
@@ -386,12 +386,12 @@ const UsersList: React.FC = () => {
 					<button
 						onClick={handleConfirmDelete}
 						disabled={confirmLoading}
-						className={`px-6 py-2 text-white-2 rounded-xl text-sm font-semibold transition-all ${users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? 'bg-[#10b981]' : 'bg-[#db3b2b]'
+						className={`px-6 py-2 text-white-2 rounded-xl text-sm font-semibold transition-all ${users.find(u => String(u._id || u.id) === String(confirmId))?.is_active === false ? 'bg-[#10b981]' : 'bg-[#db3b2b]'
 							}`}
 					>
 						{confirmLoading
-							? (users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? 'Habilitando...' : 'Deshabilitando...')
-							: (users.find(u => String(u._id || u.id) === String(confirmId))?.disabled ? 'Habilitar' : 'Deshabilitar')}
+							? (users.find(u => String(u._id || u.id) === String(confirmId))?.is_active === false ? 'Habilitando...' : 'Deshabilitando...')
+							: (users.find(u => String(u._id || u.id) === String(confirmId))?.is_active === false ? 'Habilitar' : 'Deshabilitar')}
 					</button>
 				</DialogActions>
 			</Dialog>

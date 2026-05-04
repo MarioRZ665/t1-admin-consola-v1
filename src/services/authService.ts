@@ -1,7 +1,7 @@
 import { API_URL } from '../utils/auth';
 
 export type LoginResponse = {
-	access_token?: string;
+	accessToken?: string;
 	token?: string;
 	[key: string]: any;
 };
